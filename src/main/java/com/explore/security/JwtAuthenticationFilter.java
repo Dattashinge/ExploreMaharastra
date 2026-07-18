@@ -48,8 +48,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         token = authHeader.substring(7);
+        
+        System.out.println("JWT Filter Called");
 
         username = jwtService.extractUsername(token);
+        
+        System.out.println("Username = " + username);
 
         if (username != null &&
                 SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -71,10 +75,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
                 SecurityContextHolder.getContext()
                         .setAuthentication(authToken);
+                
+                System.out.println("Authentication Set");
             }
         }
 
         filterChain.doFilter(request, response);
+        
     }
+    
+    
     
 }

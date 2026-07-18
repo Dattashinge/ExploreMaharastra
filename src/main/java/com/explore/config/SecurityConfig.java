@@ -27,41 +27,23 @@ public class SecurityConfig {
 	@Autowired
 	private JwtAuthenticationFilter jwtFilter;
 	
+	@Bean
+	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
+	    http
+	        .csrf(csrf -> csrf.disable())
+	        .sessionManagement(session ->
+	            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+	        .authorizeHttpRequests(auth -> auth
+	            .requestMatchers("/api/auth/**").permitAll()
+	            .anyRequest().authenticated()
+	        )
+	        .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
+	    return http.build();
+	}
 	
 	
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        http
-
-                .csrf(csrf -> csrf.disable())
-
-                .cors(Customizer.withDefaults())
-
-                .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-
-                .authorizeHttpRequests(auth -> auth
-
-                        // Public APIs
-
-                		.requestMatchers(
-                			    "/api/auth/register",
-                			    "/api/auth/login"
-                			).permitAll()
-
-                        // All Other APIs
-
-                        .anyRequest().authenticated()
-                        
-                        );
-        
-             //.addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class);
-        
-        return http.build();
-
-    }
-    
     @Bean
     public AuthenticationManager authenticationManager(
             AuthenticationConfiguration config)

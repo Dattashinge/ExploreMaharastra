@@ -1,6 +1,10 @@
 package com.explore.controller;
 
 import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,94 +20,137 @@ import com.explore.service.TouristPlaceService;
 @CrossOrigin(origins = "*")
 public class TouristPlaceController {
 
-	@Autowired
-	private TouristPlaceService touristPlaceService;
+    @Autowired
+    private TouristPlaceService touristPlaceService;
 
-	// ==========================
-	// Add Tourist Place
-	// ==========================
+    // ==========================
+    // Add Tourist Place
+    // ==========================
 
-	@PostMapping
-	public ResponseEntity<String> addTouristPlace(@RequestBody TouristPlaceRequest request) {
+    @PostMapping
+    public ResponseEntity<String> addTouristPlace(
+            @RequestBody TouristPlaceRequest request) {
 
-		String message = touristPlaceService.addTouristPlace(request);
+        String message = touristPlaceService.addTouristPlace(request);
 
-		if (message.equals("Tourist Place Added Successfully")) {
-			return new ResponseEntity<>(message, HttpStatus.CREATED);
-		}
+        if (message.equals("Tourist Place Added Successfully")) {
+            return new ResponseEntity<>(message, HttpStatus.CREATED);
+        }
 
-		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
-	}
+        return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
+    }
 
-	// ==========================
-	// Get All Tourist Places
-	// ==========================
+    // ==========================
+    // Get All Tourist Places
+    // ==========================
 
-	@GetMapping
-	public List<TouristPlace> getAllTouristPlaces() {
+    @GetMapping
+    public List<TouristPlace> getAllTouristPlaces() {
 
-		return touristPlaceService.getAllTouristPlaces();
-	}
+        return touristPlaceService.getAllTouristPlaces();
 
-	// ==========================
-	// Get Places By District
-	// ==========================
+    }
 
-	@GetMapping("/district/{districtId}")
-	public List<TouristPlace> getPlacesByDistrict(@PathVariable Long districtId) {
+    // ==========================
+    // Get Tourist Place By Id
+    // ==========================
 
-		return touristPlaceService.getPlacesByDistrict(districtId);
-	}
+    @GetMapping("/{id}")
+    public ResponseEntity<TouristPlace> getTouristPlaceById(
+            @PathVariable Long id) {
 
-	// ==========================
-	// Search Tourist Place
-	// ==========================
+        TouristPlace place =
+                touristPlaceService.getTouristPlaceById(id);
 
-	@GetMapping("/search")
-	public List<TouristPlace> searchPlace(@RequestParam String name) {
+        if (place == null) {
+            return ResponseEntity.notFound().build();
+        }
 
-		return touristPlaceService.searchPlace(name);
-	}
-	
-	@PutMapping("/{id}")
-	public ResponseEntity<String> updateTouristPlace(@PathVariable Long id,
-			@RequestBody TouristPlaceRequest request) {
+        return ResponseEntity.ok(place);
 
-		String message = touristPlaceService.updateTouristPlace(id, request);
+    }
 
-		if (message.equals("Tourist Place Updated Successfully")) {
-			return new ResponseEntity<>(message, HttpStatus.OK);
-		}
+    // ==========================
+    // Get Places By District
+    // ==========================
 
-		return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-	}
-	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteTouristPlace(@PathVariable Long id) {
+    @GetMapping("/district/{districtId}")
+    public List<TouristPlace> getPlacesByDistrict(
+            @PathVariable Long districtId) {
 
-		String message = touristPlaceService.deleteTouristPlace(id);
+        return touristPlaceService.getPlacesByDistrict(districtId);
 
-		if (message.equals("Tourist Place Deleted Successfully")) {
-			return new ResponseEntity<>(message, HttpStatus.OK);
-		}
+    }
 
-		return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
-	}
-	
-	// ==========================
-	// Get Tourist Place By Id
-	// ==========================
+    // ==========================
+    // Search Tourist Places
+    // ==========================
 
-	@GetMapping("/{id}")
-	public ResponseEntity<TouristPlace> getTouristPlaceById(@PathVariable Long id) {
+    @GetMapping("/search")
+    public List<TouristPlace> searchPlaces(
+            @RequestParam String keyword) {
 
-	    TouristPlace place = touristPlaceService.getTouristPlaceById(id);
+        return touristPlaceService.searchPlaces(keyword);
 
-	    if (place == null) {
-	        return ResponseEntity.notFound().build();
-	    }
+    }
 
-	    return ResponseEntity.ok(place);
-	}
+    // ==========================
+    // Update Tourist Place
+    // ==========================
+
+    @PutMapping("/{id}")
+    public ResponseEntity<String> updateTouristPlace(
+            @PathVariable Long id,
+            @RequestBody TouristPlaceRequest request) {
+
+        String message =
+                touristPlaceService.updateTouristPlace(id, request);
+
+        if (message.equals("Tourist Place Updated Successfully")) {
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+
+    }
+
+    // ==========================
+    // Delete Tourist Place
+    // ==========================
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> deleteTouristPlace(
+            @PathVariable Long id) {
+
+        String message =
+                touristPlaceService.deleteTouristPlace(id);
+
+        if (message.equals("Tourist Place Deleted Successfully")) {
+            return new ResponseEntity<>(message, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+
+    }
+    
+    @GetMapping("/page")
+    public Page<TouristPlace> getTouristPlaces(
+
+            @RequestParam(defaultValue = "0") int page,
+
+            @RequestParam(defaultValue = "5") int size,
+
+            @RequestParam(defaultValue = "id") String sortBy,
+
+            @RequestParam(defaultValue = "asc") String direction) {
+
+        return touristPlaceService.getTouristPlaces(
+                page,
+                size,
+                sortBy,
+                direction);
+
+    }
+    
 
 }

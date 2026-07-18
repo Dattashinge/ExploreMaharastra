@@ -1,5 +1,9 @@
 package com.explore.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,15 +100,6 @@ public class TouristPlaceService {
 
 	}
 
-	// ============================
-	// Search Tourist Place
-	// ============================
-
-	public List<TouristPlace> searchPlace(String name) {
-
-		return touristPlaceRepository.findByNameContainingIgnoreCase(name);
-
-	}
 	
 	// ============================
 	// Update Tourist Place
@@ -186,5 +181,26 @@ public class TouristPlaceService {
     return touristPlaceRepository.findById(id).orElse(null);
 
 }
+	
+	public List<TouristPlace> searchPlaces(String keyword) {
+	    return touristPlaceRepository.searchPlaces(keyword);
+	}
+	
+	
+	public Page<TouristPlace> getTouristPlaces(
+	        int page,
+	        int size,
+	        String sortBy,
+	        String direction) {
+
+	    Sort sort = direction.equalsIgnoreCase("desc")
+	            ? Sort.by(sortBy).descending()
+	            : Sort.by(sortBy).ascending();
+
+	    Pageable pageable = PageRequest.of(page, size, sort);
+
+	    return touristPlaceRepository.findAll(pageable);
+
+	}
 	
 }

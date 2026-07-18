@@ -10,4 +10,6 @@ public interface DistrictRepository extends JpaRepository<District, Long>{
 
 	boolean existsByName(String name);
 	Optional<District> findById(Long id);
+	
+	
 }
