@@ -17,6 +17,7 @@ public interface TouristPlaceRepository extends JpaRepository<TouristPlace, Long
 	List<TouristPlace> findByCategoryContainingIgnoreCase(String keyword);
 
 	List<TouristPlace> findByDistrict_NameContainingIgnoreCase(String keyword);
+	List<TouristPlace> findByDistrict(District district);
 
 	@Query("""
 			SELECT t FROM TouristPlace t
