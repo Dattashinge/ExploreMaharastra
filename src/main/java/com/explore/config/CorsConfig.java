@@ -18,11 +18,20 @@ public class CorsConfig {
 
         config.setAllowedOrigins(List.of(
                 "http://127.0.0.1:5500",
-                "http://localhost:5500"
+                "http://localhost:5500",
+                "https://exploremaharastra.netlify.app"
         ));
 
-        config.setAllowedMethods(List.of("*"));
+        config.setAllowedMethods(List.of(
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "OPTIONS"
+        ));
+
         config.setAllowedHeaders(List.of("*"));
+
         config.setAllowCredentials(true);
 
         UrlBasedCorsConfigurationSource source =
